@@ -1,12 +1,14 @@
 //Blogging App using Hooks
 import { useState, useRef, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { db } from "./firebase";
 import {
   collection,
   doc,
   setDoc,
   onSnapshot,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore";
 
 export default function Blog() {
@@ -40,7 +42,7 @@ export default function Blog() {
       const blogsData = snapShot.docs.map((d) => {
         return {
           id: d.id,
-          ...d.data()
+          ...d.data(),
         };
       });
       setBlogs(blogsData);
@@ -49,6 +51,7 @@ export default function Blog() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    toast("Blog is published", { autoClose: 1500, theme: "light" });
 
     // setBlogs([{ title: formData.title, content: formData.content }, ...blogs]);
     // Add a new document with a generated id.
@@ -60,7 +63,7 @@ export default function Blog() {
         new Date().getTime() - new Date().getTimezoneOffset() * 60000
       )
         .toISOString()
-        .slice(0, -8)
+        .slice(0, -8),
     });
 
     setformData({ title: "", content: "" });
@@ -71,6 +74,8 @@ export default function Blog() {
   }
 
   async function removeBlog(id) {
+    toast("Blog is deleted", { autoClose: 1500, theme: "light" });
+
     await deleteDoc(doc(db, "blogs", id));
     // setBlogs(blogs.filter((blog, index) => index !== i));
     titleRef.current.focus();
@@ -79,6 +84,7 @@ export default function Blog() {
   return (
     <>
       <h1>Write a Blog!</h1>
+      <ToastContainer autoClose={1500} theme="dark" />
       <div className="section">
         {/* Form for to write the blog */}
         <form onSubmit={handleSubmit}>
@@ -91,7 +97,7 @@ export default function Blog() {
             onChange={(e) =>
               setformData({
                 title: e.target.value,
-                content: formData.content
+                content: formData.content,
               })
             }
           />
